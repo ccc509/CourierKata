@@ -15,7 +15,14 @@ namespace CourierKaraTests
             Assert.AreEqual(98, parcelPrice.Price);
             Assert.AreEqual(196, parcelPrice.SpeedyPrice);
             Assert.AreEqual(result, "Small Parcel: $3\r\nMedium Parcel: $8\r\nLarge Parcel: $15\r\nExtra Large Parcel: $25\r\nHeavy Parcel: $50\r\nTotal Price: $98\r\nSpeedy Price: $196\r\n");
+        }
 
+        [TestMethod]
+        public void MixedRequests_CalculatePrice_ShouldGetBestPrice()
+        {
+            var parcelPriceCalculator = new ParcelPriceCalculator();
+            var parcelPrice = parcelPriceCalculator.CreateParcelPrice("25,25,25,3 25,25,25,3 25,25,25,3 25,25,25,3 25,25,25,3 25,25,25,3");
+            Assert.AreEqual(32, parcelPrice.Price);
         }
     }
 }
