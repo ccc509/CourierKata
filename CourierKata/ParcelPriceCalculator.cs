@@ -40,25 +40,36 @@ namespace CourierKata
                 var width = int.Parse(dimensions[1]);
                 var depth = int.Parse(dimensions[2]);
                 var weight = decimal.Parse(dimensions[3]);
-                string cheapestParcel = null;
-                int cheapestPrice = Int32.MaxValue;
-
-                foreach (var parcelTpye in _parcelTypes)
-                {
-                    if (parcelTpye.DoesSizeFit(height, width, depth))
-                    {
-                        var price = parcelTpye.GetPrice(weight);
-                        if (price < cheapestPrice)
-                        {
-                            cheapestPrice = price;
-                            cheapestParcel = parcelTpye.Label;
-                        }
-                    }
-                }
-
-                parcelList.Add(new Parcel(cheapestParcel, cheapestPrice));
+                parcelList.Add(GetCheapestParcel(width, height, depth, weight));
             }
 
+            int cheapestPriceWithDiscount = GetCheapestPriceWithDiscount(parcelList);
+            return new ParcelPrice(parcelList, cheapestPriceWithDiscount);
+        }
+
+        private Parcel GetCheapestParcel(int width, int height, int depth, decimal weight)
+        {
+            string cheapestParcel = null;
+            int cheapestPrice = Int32.MaxValue;
+
+            foreach (var parcelTpye in _parcelTypes)
+            {
+                if (parcelTpye.DoesSizeFit(height, width, depth))
+                {
+                    var price = parcelTpye.GetPrice(weight);
+                    if (price < cheapestPrice)
+                    {
+                        cheapestPrice = price;
+                        cheapestParcel = parcelTpye.Label;
+                    }
+                }
+            }
+
+            return new Parcel(cheapestParcel, cheapestPrice);
+        }
+
+        private int GetCheapestPriceWithDiscount(List<Parcel> parcelList)
+        {
             int cheapestPriceWithDiscount = Int32.MaxValue;
             foreach (var discountRule in _discountRules)
             {
@@ -69,7 +80,7 @@ namespace CourierKata
                 }
             }
 
-            return new ParcelPrice(parcelList, cheapestPriceWithDiscount);
+            return cheapestPriceWithDiscount;
         }
     }
 }
